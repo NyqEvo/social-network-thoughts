@@ -1,4 +1,4 @@
-const { User, Thoughts } = require('../models');
+const { User } = require('../models');
 
 module.exports = {
     getUsers(req, res) {
@@ -43,7 +43,8 @@ module.exports = {
     addToFriendsList(req, res) {
         User.findOneAndUpdate(
             {_id: req.params.userId},
-            {$push: {friends: req.params.friendId}}
+            {$push: {friends: req.params.friendId}},
+            { new: true }
         )
             .then((user) => 
                 !user
@@ -56,7 +57,8 @@ module.exports = {
     deleteFromFriendsList(req, res) {
         User.findOneAndRemove(
             {_id: req.params.userId},
-            {$pull: {friends: req.params.friendId}}
+            {$pull: {friends: req.params.friendId}},
+            { new: true }
         )
             .then((user) => 
                 !user
