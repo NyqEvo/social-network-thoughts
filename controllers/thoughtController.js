@@ -1,4 +1,3 @@
-const { Course } = require('../../../RUT-VIRT-FSF-FT-11-2022-U-LOLC/18-NoSQL/01-Activities/28-Stu_Mini-Project/Main-Fix/models');
 const { User, Thought } = require('../models');
 
 module.exports = {
@@ -24,7 +23,7 @@ module.exports = {
 
     createThought(req, res) {
         Thought.create(req.body)
-            .then((thought) => Student.findOneAndUpdate(
+            .then((thought) => Thought.findOneAndUpdate(
                 {username: thought.username},
                 {$push: {
                     thoughts: thought._id
