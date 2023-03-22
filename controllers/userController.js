@@ -45,31 +45,33 @@ module.exports = {
             .catch((err) => res.status(500).json(err));
     },
 
-    addToFriendsList(req, res) {
-        User.findOneAndUpdate(
-            { _id: req.params.userId },
-            { $push: { friends: req.params.friendId } },
-            { new: true }
-        )
-            .then((user) =>
-                !user
-                    ? res.status(404).json({ message: 'No User with this ID' })
-                    : res.json(user)
-            )
-            .catch((err) => res.status(500).json(err));
+    async addToFriendsList(req, res) {
+        try {
+            const user = await User.findOneAndUpdate(
+                { _id: req.params.userId },
+                { $push: { friends: req.params.friendId } },
+                { new: true }
+            );
+            return !user
+                ? res.status(404).json({ message: 'No User with this ID' })
+                : res.json(user);
+        } catch (err) {
+            return res.status(500).json(err);
+        }
     },
 
-    deleteFromFriendsList(req, res) {
-        User.findOneAndRemove(
-            { _id: req.params.userId },
-            { $pull: { friends: req.params.friendId } },
-            { new: true }
-        )
-            .then((user) =>
-                !user
-                    ? res.status(404).json({ message: 'No User with this ID' })
-                    : res.json(user)
-            )
-            .catch((err) => res.status(500).json(err))
+    async deleteFromFriendsList(req, res) {
+        try {
+            const user = await User.findOneAndUpdate(
+                { _id: req.params.userId },
+                { $pull: { friends: req.params.friendId } },
+                { new: true }
+            );
+            return !user
+                ? res.status(404).json({ message: 'No User with this ID' })
+                : res.json(user);
+        } catch (err) {
+            return res.status(500).json(err);
+        }
     }
 };

@@ -24,31 +24,39 @@ module.exports = {
     createThought(req, res) {
         Thought.create(req.body)
             .then((thought) => {
-                User.findOneAndUpdate(
+                return User.findOneAndUpdate(
                     { username: thought.username },
                     {
-                        $push: {
+                        $addToSet: {
                             thoughts: thought._id
                         }
                     },
                     { new: true }
                 );
-                res.json(thought)
+
             })
+            .then((user) => res.json(user))
             .catch((err) => {
                 console.log(err)
                 return res.status(500).json(err)
             })
     },
 
-    deleteThought(req, res) {
-        Thought.findOneAndRemove({ _id: req.params.thoughtId })
-            .then((thought) =>
-                !thought
-                    ? res.status(404).json({ message: 'No Thought with that ID' })
-                    : res.json(thought)
-            )
-            .catch((err) => res.status(500).json(err))
+    async deleteThought(req, res) {
+        try {
+            const user = await User.findOneAndUpdate(
+                { thoughts: { $in: req.params.thoughtId } },
+                { $pull: { thoughts: req.params.thoughtId } },
+                { new: true }
+            );
+            const thought = await Thought.findOneAndRemove({ _id: req.params.thoughtId });
+
+            return !thought
+                ? res.status(404).json({ message: 'No Thought with that ID' })
+                : res.json(thought)
+        } catch (err) {
+            res.status(500).json(err)
+        }
     },
 
     updateThought(req, res) {
